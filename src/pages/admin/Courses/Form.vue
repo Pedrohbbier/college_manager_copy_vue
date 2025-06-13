@@ -35,6 +35,14 @@
             :clearable="isEdit"
           />
 
+          <v-img
+            v-if="previewImage"
+            :src="previewImage"
+            max-width="200"
+            class="mt-2 mb-4"
+            contain
+          />
+
           <v-select
             v-model="form.modality"
             :items="modalityOptions"
@@ -92,6 +100,9 @@ const router = useRouter()
 const route = useRoute()
 const coursesStore = useCoursesStore()
 
+const existingImage = ref<string | null>(null)
+
+
 // refs e flags
 const formRef = ref()
 const loading = ref(false)
@@ -137,6 +148,18 @@ const rules = {
   required: (v: any) => (!!v && v !== '<p><br></p>') || 'Este campo é obrigatório'
 }
 
+const previewImage = computed(() => {
+   if (form.file) {
+     return URL.createObjectURL(form.file)
+   }
+   if (existingImage.value) {
+     // Ajuste aqui para montar sua URL completa se precisar, ex:
+     return `${import.meta.env.VITE_API_URL}/${existingImage.value}`
+   }
+   return null
+ })
+
+
 // se edição, carrega dados (exibe HTML no Quill)
 onMounted(async () => {
   if (isEdit.value && courseId.value !== null) {
@@ -149,6 +172,7 @@ onMounted(async () => {
       form.modality    = c.modality
       form.type        = c.type
       form.enade       = c.enade ?? null
+      existingImage.value = c.image || null
       // form.file permanece null na edição
     } catch {
       error.value = 'Falha ao carregar dados do curso.'
