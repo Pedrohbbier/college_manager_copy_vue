@@ -9,11 +9,28 @@ import CourseForm from '../pages/admin/Courses/Form.vue'
 import CoursesList from '../pages/admin/Courses/List.vue'
 import PublicCourses from '@/pages/PublicCourses.vue'
 import { useAuthStore } from '@/stores/auth'
+import MenuLayout from '@/layouts/MenuLayout.vue'
+
 
 const routes: RouteRecordRaw[] = [
-    { path: '/', name: 'Home', component: PublicCourses },
+    {
+    path: '/',
+    component: MenuLayout,
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: PublicCourses,
+      },
+      {
+        path: 'courses/:id',
+        name: 'PublicCourseDetail',
+        component: PublicCourseDetail,
+        props: true,
+      },
+    ],
+  },
 
-      { path: '/courses/:id', name: 'PublicCourseDetail', component: PublicCourseDetail, props: true },
 
 
   {
